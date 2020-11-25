@@ -107,3 +107,7 @@ BiocManager::install("DESeq2")
 ```
 
 
+```{r}
+install.packages("rmarkdown")
+```
+
