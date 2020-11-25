@@ -18,7 +18,7 @@ BiocManager::install("dada2", version = "3.11")
 ```
 
 
-pour faire l'arbre :
+#pour faire l'arbre :
 
 ```{r}
 BiocManager::install("phangorn")
@@ -60,7 +60,8 @@ install.packages("phyloseq")
 ```{r}
 install.packages(grid.arrange)
 ```
-installer vegan pour le scipt 03 alternative
+
+#installer vegan pour le script 03 alternative
 
 ```{r}
 install.packages("vegan")
@@ -68,7 +69,7 @@ install.packages("vegan")
 
 
 
-installation pour lattice spript 03 ligne 588
+#installation pour lattice script 03
 
 ```{r}
 install.packages("lattice")
