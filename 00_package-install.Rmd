@@ -1,0 +1,108 @@
+---
+title: "metabarcoding with dada2: environment installation"
+output: html_notebook
+---
+# update VM configuration
+``` {bash}
+sudo apt-get update -y 
+sudo apt-get install -y libbz2-dev
+sudo apt-get install -y liblzma-dev
+```
+#package install
+Following instruction on https://benjjneb.github.io/dada2/dada-installation.html
+```{r package install}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = '3.11')
+BiocManager::install("dada2", version = "3.11")
+```
+
+
+pour faire l'arbre :
+
+```{r}
+BiocManager::install("phangorn")
+```
+
+```{r}
+BiocManager::install("DECIPHER")
+```
+
+
+```{r}
+install.packages("gridExtra")
+```
+
+
+```{r}
+library("knitr")
+library("BiocStyle")
+.cran_packages <- c("ggplot2", "gridExtra")
+.bioc_packages <- c("dada2", "phyloseq", "DECIPHER", "phangorn")
+.inst <- .cran_packages %in% installed.packages()
+if(any(!.inst)) {
+   install.packages(.cran_packages[!.inst])
+}
+.inst <- .bioc_packages %in% installed.packages()
+if(any(!.inst)) {
+   source("http://bioconductor.org/biocLite.R")
+   biocLite(.bioc_packages[!.inst], ask = F)
+}
+# Load packages into session, and print package version
+sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+```
+
+
+```{r}
+install.packages("phyloseq")
+```
+
+```{r}
+install.packages(grid.arrange)
+```
+installer vegan pour le scipt 03 alternative
+
+```{r}
+install.packages("vegan")
+```
+
+
+
+installation pour lattice spript 03 ligne 588
+
+```{r}
+install.packages("lattice")
+```
+
+
+```{r}
+install.packages("ggplot2")
+```
+
+# ligne 360 du 03_phyloseq-alternative
+a cause de Bio trucs qui ne fonctionne plus 
+
+```{r}
+BiocManager::install(.bioc_packages[!.inst])
+```
+
+
+
+Le code du prof, a voir après pourquoi 
+
+```{bash}
+wget https://cran.r-project.org/src/contrib/Archive/structSSI/structSSI_1.1.1.tar.gz
+```
+
+```{r}
+library(devtools)
+install_local("./structSSI_1.1.1.tar.gz")
+```
+
+#installation de DESeq2 pour phyloseq install 
+
+```{r}
+BiocManager::install("DESeq2")
+```
+
+
