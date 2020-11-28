@@ -1,37 +1,40 @@
+---
+title: "metabarcoding with dada2: environment installation"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
 
-Le code suivant fonctionne dnas la console mais pas dnas le notebook 
-```{r}
-library("knitr")
-library("BiocStyle")
-.cran_packages <- c("ggplot2", "gridExtra")
-.bioc_packages <- c("dada2", "phyloseq", "DECIPHER", "phangorn")
-.inst <- .cran_packages %in% installed.packages()
-if(any(!.inst)) {
-   install.packages(.cran_packages[!.inst])
-}
-.inst <- .bioc_packages %in% installed.packages()
-if(any(!.inst)) {
-   Biocmanager::install(.bioc_packages[!.inst], ask = F)
-}
-# Load packages into session, and print package version
-sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+# Introduction.
 
-```
-Fin du code 
+## Installation des packages.
 
+Tout les packages seront installés dnas un script à part (00_package-install.Rmd)
 
-```{r}
-set.seed(100)
-```
+## Importation des données.
+
+Les données utilisées pour nos analyses ont été obtenue par Illumina Miseq 2x250 amplicon de la séquence V4 du 16S  (Kozich et al. 2013).
+Ils proviennent de 360 échantillons fécaux collectés de 12 souries dnas leur première année de vie
+These 360 fecal samples were collected from 12 mice longitudinally over the first year of life one mock community control. These were collected to investigate the development and stabilization of the murine microbiome (Schloss et al. 2012). These data are downloaded from the following data location and unzip. For now just consider them paired-end fastq files to be processed. Define the following path variable so that it points to the extracted directory on your machine:
+
+L'importation des données sera réalisée dans un script à part (01_data-import.Rmd)
 
 
+Après avoir dezippé les données, on va les associer à une variable. 
 
 ```{r}
 miseq_path <- "./MiSeq_SOP" # CHANGE to the directory containing the fastq files after unzipping.
 list.files(miseq_path)
 ```
 
-#filter and trim 
+# Filtration et réduction des données. 
+
+Dans cette partie, nous allons retirer les reads de mauvaise qualité et réduire les autres pour qu'ils aient une longueur constante. 
+
+Premièrement, on va lire les fichiers de fastq et créer des listes que l'on va associer à des variables:
+-> Variable fnFs pour les fowards.
+-> Variable fnRs pour les reverses.
 
 ```{r}
 # Sort ensures forward/reverse reads are in same order
@@ -48,13 +51,22 @@ fnFs[1:3]
 fnRs[1:3]
 ```
 
+Quand on séquence en utilisant la méthode Illumina, on va avoir une baisse de qualité à la fin du séquençage des reads
+On peux voir cela sur les graphiques suivants (pour les deux premiers fowards et reverses):
+
 ```{r}
 plotQualityProfile(fnFs[1:2])
 ```
 
+On remarque une baisse du Qscore lors des cycles, mais c'est après 240 cycles que ce score va passer en dessous de 30 (valeur limite concensus)
+
+
 ```{r}
 plotQualityProfile(fnRs[1:2])
 ```
+
+Le Qscore des reverses baisse beaucoup plus rapidement que pour les fowards. Il passe en dessous de 30 après seulement 160 cycles. 
+
 
 ```{r}
 filt_path <- file.path(miseq_path, "filtered") # Place filtered files in filtered/ subdirectory
@@ -63,18 +75,18 @@ filtFs <- file.path(filt_path, paste0(sampleNames, "_F_filt.fastq.gz"))
 filtRs <- file.path(filt_path, paste0(sampleNames, "_R_filt.fastq.gz"))
 ```
 
-#Filter the forward and reverse reads:
+Quand on filtre et réduit (filter and trim), le foward et reverse associé doivent tous les deux passer la 'sélection' pour être gardé
 
-
+Filter the forward and reverse reads:
 ```{r}
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
               maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
               compress=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
 head(out)
 ```
-#Partie II: Infer sequence variants
+# Infer sequence variants
 
-#première sous partie, on va faire une Dereplication
+##Dereplication
 
 
 ```{r}
@@ -85,6 +97,7 @@ names(derepFs) <- sampleNames
 names(derepRs) <- sampleNames
 ```
 
+méthode DADA2: pour différentier les variants et les erreurs de séquençage 
 
 ```{r}
 errF <- learnErrors(filtFs, multithread=TRUE)
@@ -107,13 +120,15 @@ dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
 dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
 ```
 
-#Inspecting the dada-class object returned by dada:
+Inspecting the dada-class object returned by dada:
 
 ```{r}
 dadaFs[[1]]
 ```
 
-#Construct sequence table and remove chimeras
+# Construct sequence table and remove chimeras.
+
+## Construction de la table.
 
 ```{r}
 mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs)
@@ -124,14 +139,18 @@ seqtabAll <- makeSequenceTable(mergers[!grepl("Mock", names(mergers))])
 table(nchar(getSequences(seqtabAll)))
 ```
 
-#Notably, chimeras have not yet been removed. The error model in the sequence inference algorithm does not include a chimera component, and therefore we expect this sequence table to include many chimeric sequences. We now remove chimeric sequences by comparing each inferred sequence to the others in the table, and removing those that can be reproduced by stitching together two more abundant sequences.
+
+
+## Supression des chimères.
+
+Comparaison de chaque séquences de la table entre-elles pour éliminer celles qui serai le résultat de deux autres plus abondante. 
 
 ```{r}
 seqtabNoC <- removeBimeraDenovo(seqtabAll)
 ```
 
 
-#Assign taxonomy
+# Assignation de la taxonomie.
 
 
 ```{r}
@@ -590,6 +609,7 @@ ggplot() +
 
 ```{r}
 library(caret)
+library(lattice)
 sample_data(pslog)$age2 <- cut(sample_data(pslog)$age, c(0, 100, 400))
 dataMatrix <- data.frame(age = sample_data(pslog)$age2, otu_table(pslog))
 # take 8 mice at random to be the training set, and the remaining 4 the test set
