@@ -55,6 +55,8 @@ Quand on séquence en utilisant la méthode Illumina, on va avoir une baisse de 
 On peux voir cela sur les graphiques suivants (pour les deux premiers fowards et reverses):
 
 ```{r}
+library(ggplot2)
+library(dada2)
 plotQualityProfile(fnFs[1:2])
 ```
 
@@ -159,6 +161,12 @@ fastaRef <- "./silva_nr99_v138_train_set.fa.gz"
 taxTab <- assignTaxonomy(seqtabNoC, refFasta = fastaRef, multithread=TRUE)
 unname(head(taxTab))
 ```
+
+```{r}
+fn <- "Users/x x/Desktop/Drexel 2018/Step1_FASTQ/Reference_Databases/silva_nr99_v138_train_set.fa.gz"
+file.exists(fn)
+```
+
 
 
 partie précédente ne fonctionne pas ... 
