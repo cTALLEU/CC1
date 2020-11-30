@@ -157,25 +157,18 @@ seqtabNoC <- removeBimeraDenovo(seqtabAll)
 
 ```{r}
 library(dada2)
-fastaRef <- "./silva_nr99_v138_train_set.fa.gz"
+fastaRef <- "~/silva_nr99_v138_train_set.fa.gz"
 taxTab <- assignTaxonomy(seqtabNoC, refFasta = fastaRef, multithread=TRUE)
 unname(head(taxTab))
 ```
 
-```{r}
-fn <- "Users/x x/Desktop/Drexel 2018/Step1_FASTQ/Reference_Databases/silva_nr99_v138_train_set.fa.gz"
-file.exists(fn)
-```
-
-
-
-partie précédente ne fonctionne pas ... 
 
 
 #Construct phylogenetic tree
 
 
 ```{r}
+library(DECIPHER)
 seqs <- getSequences(seqtabNoC)
 names(seqs) <- seqs # This propagates to the tip labels of the tree
 alignment <- AlignSeqs(DNAStringSet(seqs), anchor=NA,verbose=FALSE)
@@ -904,4 +897,4 @@ summary(hfdr_res)
 plot(hfdr_res, height = 5000) # opens in a browser
 ```
  
-a continuer 
+a continuer  
