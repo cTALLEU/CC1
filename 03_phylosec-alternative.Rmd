@@ -892,7 +892,7 @@ summary(hfdr_res)
 ```
 
 
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE}
 #interactive part: not run
 plot(hfdr_res, height = 5000) # opens in a browser
 ```

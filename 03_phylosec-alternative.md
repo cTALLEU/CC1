@@ -880,7 +880,7 @@ out.wuf.log <- ordinate(pslog, method = "MDS", distance = "wunifrac")
 ```
 
     ## Warning in UniFrac(physeq, weighted = TRUE, ...): Randomly assigning root as --
-    ## GCAAGCGTTATCCGGATTTACTGGGTGTAAAGGGGGCGCAGACGGCCATGGCAAGCCCGGTGTGAAAGGCAGGGGCATAACCCCTGGACTGCACTGGGAACTGTCAGGCTGGAGTGCCGGAGGGGTAAGCGGAATTCCTGGTGTAGCGGTGAAATGCGTAGATATCAGGAGGAACACCGGCGGCGAAGGCGGCTTACTGGACGGCAACTGACGTTGAGGCCCGAAAGCGTGGGGA
+    ## GCAAGCGTTGTCCGGAATTATTGGGCGTAAAGAGTACGTAGGCGGTCTGTTAAGCGCAAGGTGAAAGGCATAGGCTCAACCAATGTGAGCCTTGCGAACTGTCAGACTTGAGTGCAGGAGAGGAAAGCGGAATTCCTAGTGTAGCGGTGAAATGCGTAGATATTAGGAGGAACACCGGTGGCGAAGGCGGCTTTCTGGACTGAAACTGACGCTGAGGTACGAAAGCGTGGGGAGC
     ## -- in the phylogenetic tree in the data you provided.
 
 ``` r
@@ -955,7 +955,7 @@ out.wuf.log <- ordinate(pslog, method = "PCoA", distance ="wunifrac")
 ```
 
     ## Warning in UniFrac(physeq, weighted = TRUE, ...): Randomly assigning root as --
-    ## GCTAGCGTTGCTCGGAATCACTGGGCGTAAAGGGCGCGTAGGCGGCCGATTAAGTCGGGGGTGAAAGCCTGTGGCTCAACCACAGAATTGCCTTCGATACTGGTTGGCTTGAGACCGGAAGAGGACAGCGGAACTGCGAGTGTAGAGGTGAAATTCGTAGATATTCGCAAGAACACCAGTGGCGAAGGCGGCTGTCTGGTCCGGTTCTGACGCTGAGGCGCGAAAGCGTGGGGAG
+    ## GCAAGCGTTATCCGGATTTACTGGGTGTAAAGGGAGCGTAGACGGCGGTGCAAGCCAGATGTGAAAGCCCGGGGCTCAACCCCGGGACTGCATTTGGAACTGTGCTGCTAGAGTGTCGGAGAGGCAGGCGGAATTCCTAGTGTAGCGGTGAAATGCGTAGATATTAGGAGGAACACCAGTGGCGAAGGCGGCCTGCTGGACGATGACTGACGTTGAGGCTCGAAAGCGTGGGGAG
     ## -- in the phylogenetic tree in the data you provided.
 
 ``` r
@@ -1192,8 +1192,8 @@ table(plsClasses, testing$age)
 
     ##            
     ## plsClasses  (0,100] (100,400]
-    ##   (0,100]        64         0
-    ##   (100,400]       3        44
+    ##   (0,100]        64         4
+    ##   (100,400]       0        42
 
 ``` r
 library(randomForest)
@@ -1231,8 +1231,8 @@ table(rfClasses, testing$age)
 
     ##            
     ## rfClasses   (0,100] (100,400]
-    ##   (0,100]        67         1
-    ##   (100,400]       0        43
+    ##   (0,100]        64        16
+    ##   (100,400]       0        30
 
 \#To interpret these PLS and random forest results, it is standard to
 produce biplots and proximity plots, respectively. The code below
@@ -1314,7 +1314,7 @@ ggplot(rf_prox) +
 as.vector(tax_table(ps)[which.max(importance(rfFit$finalModel)), c("Family", "Genus")])
 ```
 
-    ## [1] "Erysipelotrichaceae" "Turicibacter"
+    ## [1] "Lachnospiraceae" "Roseburia"
 
 ``` r
 impOtu <- as.vector(otu_table(pslog)[,which.max(importance(rfFit$finalModel))])
@@ -1412,7 +1412,7 @@ gt <- graph_perm_test(ps, "family_relationship", grouping = "host_subject_id",
 gt$pval
 ```
 
-    ## [1] 0.004
+    ## [1] 0.002
 
 pourquoi la valeur précédente n’est pas la même que dans le tuto ….
 
@@ -1686,11 +1686,6 @@ summary(hfdr_res)
     ## [only 10 most significant hypotheses shown] 
     ## --- 
     ## Signif. codes:  0 '***' 0.015 '**' 0.15 '*' 0.75 '.' 1.5 '-' 1
-
-``` r
-#interactive part: not run
-plot(hfdr_res, height = 5000) # opens in a browser
-```
 
 ``` r
 tax <- tax_table(pslog)[, c("Family", "Genus")] %>%
